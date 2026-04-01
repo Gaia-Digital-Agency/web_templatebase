@@ -13,10 +13,11 @@ const NEXT_PUBLIC_SERVER_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
 
 const nextConfig: NextConfig = {
   basePath: '/gaiadaweb',
+  allowedDevOrigins: ['34.124.244.233'],
   images: {
     localPatterns: [
       {
-        pathname: '/api/media/file/**',
+        pathname: '/gaiadaweb/api/media/file/**',
       },
     ],
     qualities: [100],

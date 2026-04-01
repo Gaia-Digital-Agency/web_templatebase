@@ -72,6 +72,11 @@ export interface Config {
     media: Media;
     categories: Category;
     users: User;
+    services: Service;
+    portfolio: Portfolio;
+    'about-items': AboutItem;
+    departments: Department;
+    team: Team;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -94,6 +99,11 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    services: ServicesSelect<false> | ServicesSelect<true>;
+    portfolio: PortfolioSelect<false> | PortfolioSelect<true>;
+    'about-items': AboutItemsSelect<false> | AboutItemsSelect<true>;
+    departments: DepartmentsSelect<false> | DepartmentsSelect<true>;
+    team: TeamSelect<false> | TeamSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -112,10 +122,12 @@ export interface Config {
   globals: {
     header: Header;
     footer: Footer;
+    settings: Setting;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    settings: SettingsSelect<false> | SettingsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -201,7 +213,63 @@ export interface Page {
       | null;
     media?: (number | null) | Media;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
+  layout: (
+    | CallToActionBlock
+    | ContentBlock
+    | MediaBlock
+    | ArchiveBlock
+    | FormBlock
+    | {
+        mediaPosition: 'left' | 'right';
+        richText: {
+          root: {
+            type: string;
+            children: {
+              type: any;
+              version: number;
+              [k: string]: unknown;
+            }[];
+            direction: ('ltr' | 'rtl') | null;
+            format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+            indent: number;
+            version: number;
+          };
+          [k: string]: unknown;
+        };
+        media: number | Media;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'contentMedia';
+      }
+    | {
+        title?: string | null;
+        description?: string | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'servicesBlock';
+      }
+    | {
+        title?: string | null;
+        description?: string | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'portfolioBlock';
+      }
+    | {
+        title?: string | null;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'aboutBlock';
+      }
+    | {
+        title?: string | null;
+        description?: string | null;
+        form: number | Form;
+        id?: string | null;
+        blockName?: string | null;
+        blockType: 'careerBlock';
+      }
+  )[];
   meta?: {
     title?: string | null;
     /**
@@ -721,6 +789,24 @@ export interface Form {
             blockName?: string | null;
             blockType: 'textarea';
           }
+        | {
+            siteKey: string;
+            /**
+             * This will be used to verify the hCaptcha on the server.
+             */
+            secretKey: string;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'hCaptcha';
+          }
+        | {
+            label: string;
+            name: string;
+            required?: boolean | null;
+            id?: string | null;
+            blockName?: string | null;
+            blockType: 'file';
+          }
       )[]
     | null;
   submitButtonLabel?: string | null;
@@ -778,6 +864,66 @@ export interface Form {
         id?: string | null;
       }[]
     | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services".
+ */
+export interface Service {
+  id: number;
+  title: string;
+  description: string;
+  image: number | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "portfolio".
+ */
+export interface Portfolio {
+  id: number;
+  title: string;
+  description: string;
+  image: number | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-items".
+ */
+export interface AboutItem {
+  id: number;
+  title: string;
+  description: string;
+  image: number | Media;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "departments".
+ */
+export interface Department {
+  id: number;
+  name: string;
+  description?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team".
+ */
+export interface Team {
+  id: number;
+  name: string;
+  role: string;
+  image: number | Media;
+  department: number | Department;
   updatedAt: string;
   createdAt: string;
 }
@@ -992,6 +1138,26 @@ export interface PayloadLockedDocument {
         value: number | User;
       } | null)
     | ({
+        relationTo: 'services';
+        value: number | Service;
+      } | null)
+    | ({
+        relationTo: 'portfolio';
+        value: number | Portfolio;
+      } | null)
+    | ({
+        relationTo: 'about-items';
+        value: number | AboutItem;
+      } | null)
+    | ({
+        relationTo: 'departments';
+        value: number | Department;
+      } | null)
+    | ({
+        relationTo: 'team';
+        value: number | Team;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: number | Redirect;
       } | null)
@@ -1089,6 +1255,47 @@ export interface PagesSelect<T extends boolean = true> {
         mediaBlock?: T | MediaBlockSelect<T>;
         archive?: T | ArchiveBlockSelect<T>;
         formBlock?: T | FormBlockSelect<T>;
+        contentMedia?:
+          | T
+          | {
+              mediaPosition?: T;
+              richText?: T;
+              media?: T;
+              id?: T;
+              blockName?: T;
+            };
+        servicesBlock?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              id?: T;
+              blockName?: T;
+            };
+        portfolioBlock?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              id?: T;
+              blockName?: T;
+            };
+        aboutBlock?:
+          | T
+          | {
+              title?: T;
+              id?: T;
+              blockName?: T;
+            };
+        careerBlock?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              form?: T;
+              id?: T;
+              blockName?: T;
+            };
       };
   meta?:
     | T
@@ -1358,6 +1565,61 @@ export interface UsersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services_select".
+ */
+export interface ServicesSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  image?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "portfolio_select".
+ */
+export interface PortfolioSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  image?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about-items_select".
+ */
+export interface AboutItemsSelect<T extends boolean = true> {
+  title?: T;
+  description?: T;
+  image?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "departments_select".
+ */
+export interface DepartmentsSelect<T extends boolean = true> {
+  name?: T;
+  description?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "team_select".
+ */
+export interface TeamSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
+  image?: T;
+  department?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects_select".
  */
 export interface RedirectsSelect<T extends boolean = true> {
@@ -1477,6 +1739,23 @@ export interface FormsSelect<T extends boolean = true> {
               label?: T;
               width?: T;
               defaultValue?: T;
+              required?: T;
+              id?: T;
+              blockName?: T;
+            };
+        hCaptcha?:
+          | T
+          | {
+              siteKey?: T;
+              secretKey?: T;
+              id?: T;
+              blockName?: T;
+            };
+        file?:
+          | T
+          | {
+              label?: T;
+              name?: T;
               required?: T;
               id?: T;
               blockName?: T;
@@ -1666,6 +1945,9 @@ export interface Header {
  */
 export interface Footer {
   id: number;
+  visitorCount?: number | null;
+  copyright?: string | null;
+  developedBy?: string | null;
   navItems?:
     | {
         link: {
@@ -1683,6 +1965,29 @@ export interface Footer {
           url?: string | null;
           label: string;
         };
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings".
+ */
+export interface Setting {
+  id: number;
+  /**
+   * Enter the site-wide WhatsApp number (e.g., +1234567890)
+   */
+  whatsappNumber?: string | null;
+  contactEmail?: string | null;
+  socialLinks?:
+    | {
+        platform: 'facebook' | 'instagram' | 'linkedin' | 'tiktok' | 'youtube';
+        placeholder?: string | null;
+        url: string;
+        icon?: (number | null) | Media;
         id?: string | null;
       }[]
     | null;
@@ -1717,6 +2022,9 @@ export interface HeaderSelect<T extends boolean = true> {
  * via the `definition` "footer_select".
  */
 export interface FooterSelect<T extends boolean = true> {
+  visitorCount?: T;
+  copyright?: T;
+  developedBy?: T;
   navItems?:
     | T
     | {
@@ -1729,6 +2037,26 @@ export interface FooterSelect<T extends boolean = true> {
               url?: T;
               label?: T;
             };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings_select".
+ */
+export interface SettingsSelect<T extends boolean = true> {
+  whatsappNumber?: T;
+  contactEmail?: T;
+  socialLinks?:
+    | T
+    | {
+        platform?: T;
+        placeholder?: T;
+        url?: T;
+        icon?: T;
         id?: T;
       };
   updatedAt?: T;
