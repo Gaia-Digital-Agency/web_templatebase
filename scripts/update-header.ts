@@ -1,17 +1,18 @@
 import { getPayload } from 'payload'
-import config from './src/payload.config'
+import config from '../src/payload.config'
+import type { Header } from '../src/payload-types'
 
 const updateHeader = async () => {
   const payload = await getPayload({ config })
-  
-  const navItems = [
-    { link: { type: 'custom', url: '/', label: 'Home' } },
-    { link: { type: 'custom', url: '/services', label: 'Services' } },
-    { link: { type: 'custom', url: '/portfolio', label: 'Portfolio' } },
-    { link: { type: 'custom', url: '/about', label: 'About' } },
-    { link: { type: 'custom', url: '/careers', label: 'Careers' } },
-    { link: { type: 'custom', url: '/blog', label: 'Blog' } },
-    { link: { type: 'custom', url: '/contact', label: 'Contact' } },
+
+  const navItems: NonNullable<Header['navItems']> = [
+    { link: { type: 'custom' as const, url: '/', label: 'Home' } },
+    { link: { type: 'custom' as const, url: '/services', label: 'Services' } },
+    { link: { type: 'custom' as const, url: '/portfolio', label: 'Portfolio' } },
+    { link: { type: 'custom' as const, url: '/about', label: 'About' } },
+    { link: { type: 'custom' as const, url: '/careers', label: 'Careers' } },
+    { link: { type: 'custom' as const, url: '/blog', label: 'Blog' } },
+    { link: { type: 'custom' as const, url: '/contact', label: 'Contact' } },
   ]
 
   await payload.updateGlobal({
@@ -21,7 +22,7 @@ const updateHeader = async () => {
       navItems,
     },
   })
-  
+
   console.log('Header updated successfully')
   process.exit(0)
 }
