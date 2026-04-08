@@ -11,7 +11,7 @@ This project is intended to be used as a template for future website builds. The
 
 ## Current Role
 
-- Server path: `/var/www/template`
+- Server path: `/var/www/templategda`
 - Git remote: `git@github.com:Gaia-Digital-Agency/web_template.git`
 
 This is the base template project, forked from the `gaiadaweb` project and maintained as a reusable starter for future builds.
@@ -118,10 +118,10 @@ Example backup created on the server:
 
 Running on GCP VM (`gda-s01`) as of April 4, 2026:
 
-- **PM2 process**: `template` on port `3004`
+- **PM2 process**: `templategda` on port `3004`
 - **Nginx**: `/template` location block in `sites-enabled/gda-s01` proxying to `127.0.0.1:3004`
-- **URL**: `http://34.124.244.233/template`
-- **Admin**: `http://34.124.244.233/template/admin`
+- **URL**: `http://34.124.244.233/templategda`
+- **Admin**: `http://34.124.244.233/templategda/admin`
 - **Database**: `template_db` owned by `template_user`
 
 ## Build Status
