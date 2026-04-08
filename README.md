@@ -99,6 +99,8 @@ Current V1 endpoints:
 - `GET /api/serena/content/search`
 - `POST /api/serena/revalidate`
 
+Neutral Hutton-facing aliases are also available under `/api/web-manager/*` with the same request and response shapes.
+
 See `docs/serena-api.md` for the contract and expected environment variables.
 
 ## Database Backup

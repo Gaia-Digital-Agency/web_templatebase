@@ -1,8 +1,10 @@
 # Serena API V1
 
-This project exposes a small management API under `/api/serena/*` so a remote Serena workspace can operate the site without using the human admin UI directly.
+This project exposes a small management API under `/api/serena/*` so a remote agent workspace can operate the site without using the human admin UI directly.
 
 The current V1 contract is intentionally small and reusable across similar Next.js + Payload CMS websites.
+
+For neutral Hutton-facing usage, the same handlers are also exposed under `/api/web-manager/*`.
 
 ## Authentication
 
